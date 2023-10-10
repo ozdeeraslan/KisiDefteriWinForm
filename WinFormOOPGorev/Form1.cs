@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace WinFormOOPGorev
@@ -12,10 +14,23 @@ namespace WinFormOOPGorev
         public Form1()
         {
             InitializeComponent();
-            kisiler = OrnekVeriler();
+            VerileriYukle();
             KisileriListele();
 
-            //this.AcceptButton = btnEkle;
+        }
+
+        private void VerileriYukle()
+        {
+            try
+            {
+                string json = File.ReadAllText("veri.json");
+                kisiler = JsonSerializer.Deserialize<List<Kisi>>(json)!; // seralization tersi(deserialize). String listeyi objeye ceviriyor.
+            }
+            catch (Exception)
+            {
+
+                kisiler = OrnekVeriler();
+            }
         }
 
         private void KisileriListele()
@@ -141,7 +156,19 @@ namespace WinFormOOPGorev
                 btnSil.PerformClick();
             }
 
-            
+
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var options = new JsonSerializerOptions()
+            {
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
+
+            string json = JsonSerializer.Serialize(kisiler, options);
+            File.WriteAllText("veri.json", json);
         }
     }
 }

@@ -154,6 +154,7 @@
             Controls.Add(lblAd);
             Name = "Form1";
             Text = "Kisi Defteri";
+            FormClosing += Form1_FormClosing;
             ResumeLayout(false);
             PerformLayout();
         }
